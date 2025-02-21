@@ -2,7 +2,7 @@
 Student information for this assignment:
 
 Replace <FULL NAME> with your name.
-On my/our honor, <FULL NAME> and <FULL NAME>, this 
+On my/our honor, Noah Wood and Luis Higareda, this 
 programming assignment is my own work and I have not provided this code to 
 any other student.
 
@@ -13,7 +13,7 @@ code to someone else), the case shall be submitted to the Office of the Dean of
 Students. Academic penalties up to and including an F in the course are likely.
 
 UT EID 1: nww376
-UT EID 2:
+UT EID 2: leh3479
 """
 
 
@@ -26,25 +26,29 @@ def length_of_longest_substring_n3(s):
     post: Returns an integer >= 0 representing the length of the longest substring
           in s that contains no repeating characters.
     """
-    temp_freq_counter = [0]
-    highest_freq_count = [0]
-    word_combination = ""
-    for i, char in enumerate(s):
-        word_combination = char
-        for j in range(1, len(s)):
-            if(s[i] != s[j] and s[j] not in word_combination):
-                word_combination += s[j]
-                temp_freq_counter[0] = len(word_combination)
+    ascii_freq = [False] * 256
+    list_char = []
+    temp_freq = 0
+    max_freq = 0
+    for i in range(len(s)):
+        for j in range(i + 1, len(s)):
+            list_char.append(s[i:j+1])
+    for characters in list_char:
+        length = len(characters)
+        for char_index in range(length):
+            if ascii_freq[ord(characters[char_index])] is False:
+                ascii_freq[ord(characters[char_index])] = True
+                temp_freq += 1
             else:
-                word_combination = char
-            if highest_freq_count < temp_freq_counter:
-                highest_freq_count[0] = temp_freq_counter[0]
-                temp_freq_counter[0] = 0
-        word_combination = ""
-    return highest_freq_count[0]
+                max_freq = max(max_freq,temp_freq)
+                temp_freq = 0
+        max_freq = max(max_freq,temp_freq)
+        temp_freq = 0
+        ascii_freq = [False] * 256
+    return max_freq
 
 
-# TODO: implement this function. You may delete this comment when you are done.
+
 def length_of_longest_substring_n2(s):
     """
     Finds the length of the longest substring without repeating characters
@@ -56,27 +60,25 @@ def length_of_longest_substring_n2(s):
     post: Returns an integer >= 0 representing the length of the longest substring
           in s that contains no repeating characters.
     """
-    s_to_ascii = []
-    for char in s:
-        s_to_ascii.append(ord(char))
+
     max_len = 0
-    length = len(s_to_ascii)
+    length = len(s)
     for index in range(length):
-        cur_str = []
-        cur_str.append(s_to_ascii[index])
-        next_str = index + 1
-        while next_str <= (len(s_to_ascii) - 1) and s_to_ascii[next_str] not in cur_str:
-            cur_str.append(s_to_ascii[next_str])
-            next_str += 1
-        max_len = max(max_len, len(cur_str))
+        rep_ascii = [False] * 256
+        rep_ascii[ord(s[index])] = True
+        temp = 1
+        tracker = True
+        for next_let in range(index + 1, length):
+            if tracker is True:
+                if rep_ascii[ord(s[next_let])] is False:
+                    temp += 1
+                    rep_ascii[ord(s[next_let])] = True
+                else:
+                    tracker = False
+        max_len = max(max_len, temp)
     return max_len
 
-
-
-# TODO: implement this function. You may delete this comment when you are done.
 def length_of_longest_substring_n(s):
-    
-    
     """
     Finds the length of the longest substring without repeating characters
     using a frequency list approach (O(N)), converting each character to
@@ -89,4 +91,16 @@ def length_of_longest_substring_n(s):
     post: Returns an integer >= 0 representing the length of the longest substring
           in s that contains no repeating characters.
     """
-    pass
+    max_len = 0
+    length = len(s)
+    for index in range(length):
+        rep_ascii = [False] * 256
+        rep_ascii[ord(s[index])] = True
+        temp = 1
+        for next_let in range(index + 1, length):
+            if rep_ascii[ord(s[next_let])] is True:
+                break
+            temp += 1
+            rep_ascii[ord(s[next_let])] = True
+        max_len = max(max_len, temp)
+    return max_len
